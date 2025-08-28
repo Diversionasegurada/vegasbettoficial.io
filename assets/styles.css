@@ -184,4 +184,26 @@ h1.center{
 .badge{ background:rgba(66,70,90,.25); border:1px solid rgba(66,70,90,.5) }
 .badge-admin{ background:rgba(224,193,120,.10); border-color:rgba(224,193,120,.4) }
 .copybtn{ background:#12131a; border-color:rgba(255,255,255,.16) }
+/* ==== Fix duro para que el logo JAMÁS se dispare de tamaño ==== */
+.logo-hero{ display:flex; justify-content:center; margin:10px 0 8px; }
+.logo-hero .logo-img{
+  max-width: 160px !important;   /* ajustá 140/160/180 a gusto */
+  width: 100% !important;
+  height: auto !important;
+  display:block;
+  border-radius:12px;
+  box-shadow:0 6px 20px rgba(0,0,0,.35);
+}
+@media (max-width:640px){
+  .logo-hero .logo-img{ max-width: 120px !important; }
+}
+
+/* Por si hay alguna regla vieja que lo hacía gigante */
+.hero .portada,
+.portada-frame,
+.portada-frame img{
+  max-width:100% !important;
+  width:auto !important;
+  height:auto !important;
+}
 
