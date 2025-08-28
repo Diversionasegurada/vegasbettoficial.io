@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>VegasBett — Retirar saldo</title>
+
+  <link rel="stylesheet" href="assets/styles.css"/>
+  <script src="assets/config.js"></script>
+  <script defer src="assets/app.js"></script>
+</head>
+<body class="bg-blur">
+  <div class="container">
+    <div class="card">
+      <div class="header">
+        <div class="brand">
+          <span>🎰 VegasBett</span>
+          <span class="badge">Retiros</span>
+        </div>
+        <a class="badge-pill" href="index.html">← Volver</a>
+      </div>
+
+      <h1>Solicitá tu retiro</h1>
+
+      <div class="note" style="font-size:15px; line-height:1.45">
+        🎉 <strong>¡FELICITACIONES POR TU PREMIO!</strong> 🥳<br/>
+        Para procesar tu retiro, por favor completá los siguientes datos:
+        <ul class="clean">
+          <li>👤 <em>Usuario</em></li>
+          <li>👑 <em>Titular de la cuenta</em></li>
+          <li>🏦 <em>CBU o Alias</em></li>
+          <li>💵 <em>Monto a retirar</em></li>
+        </ul>
+        <hr class="soft"/>
+        ⏰ <strong>RECORDÁ:</strong><br/>
+        📆 Solo se puede realizar 1 retiro cada 24 hs.<br/>
+        💸 Monto máximo por retiro: $250.000
+      </div>
+
+      <form id="formRetirar" class="form" style="margin-top:14px">
+        <div>
+          <label for="usuarioR">Usuario</label>
+          <input id="usuarioR" type="text" placeholder="Ej: ricardo23" required/>
+        </div>
+        <div>
+          <label for="titularR">Titular de la cuenta</label>
+          <input id="titularR" type="text" placeholder="Ej: Priscila Correa" required/>
+        </div>
+        <div>
+          <label for="cbuAliasR">CBU o Alias</label>
+          <input id="cbuAliasR" type="text" placeholder="Ej: 000000... o Vegass.bet" required/>
+        </div>
+        <div>
+          <label for="montoR">Monto a retirar (ARS)</label>
+          <input id="montoR" type="number" inputmode="numeric" placeholder="Ej: 20000" required min="1" max="250000"/>
+        </div>
+        <div class="cta-row">
+          <button type="submit" class="btn ok">Enviar por WhatsApp</button>
+          <a href="index.html" class="btn secondary">Cancelar</a>
+        </div>
+      </form>
+
+      <footer class="center">
+        © <span id="year"></span> VegasBett
+      </footer>
+    </div>
+  </div>
+  <div id="toast" class="toast">Copiado</div>
+</body>
+</html>

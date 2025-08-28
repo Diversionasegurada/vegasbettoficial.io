@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>VegasBett — Centro de Atención</title>
+
+  <!-- Rutas relativas -->
+  <link rel="stylesheet" href="assets/styles.css"/>
+  <script src="assets/config.js"></script>
+  <script defer src="assets/app.js"></script>
+
+  <!-- head dinámico (noindex y OG) -->
+  <script>
+  (function(){
+    const C = window.VEGASBETT_CONFIG || {};
+    if (C.NO_INDEX) {
+      var m = document.createElement('meta');
+      m.name = 'robots'; m.content = 'noindex,nofollow';
+      document.head.appendChild(m);
+    }
+    if (C.SHARE_PREVIEW !== false) {
+      var t=document.createElement('meta'); t.setAttribute('property','og:title');
+      t.content=(C.MARCA||'VegasBett')+' – Cargas y Retiros'; document.head.appendChild(t);
+      var d=document.createElement('meta'); d.setAttribute('property','og:description');
+      d.content='Atención por WhatsApp. Cargas y retiros.'; document.head.appendChild(d);
+      var i=document.createElement('meta'); i.setAttribute('property','og:image');
+      i.content=(C.OG_IMAGE||'assets/portada_paginaweb.png'); document.head.appendChild(i);
+    }
+    var tc=document.createElement('meta'); tc.name='theme-color'; tc.content='#5b2d82'; document.head.appendChild(tc);
+  })();
+  </script>
+</head>
+<body class="bg-blur">
+  <div class="container">
+    <div class="card">
+      <div class="header">
+        <div class="brand">
+          <span>🎰 VegasBett</span>
+          <span class="badge">Atención 24/7</span>
+        </div>
+        <span class="badge-pill badge-admin hidden" id="adminToggle" title="Panel rápido">Admin</span>
+      </div>
+
+      <!-- Logo / portada -->
+      <div class="logo-hero" id="logoHero">
+        <img src="assets/portada_paginaweb.png" alt="VegasBett" class="logo-img">
+      </div>
+
+      <h1 class="center">¿Qué necesitás hacer hoy?</h1>
+      <p class="center sub">Uso interno.</p>
+
+      <!-- Leyenda dorada -->
+      <p class="center gold-legend">
+        Página oficial de <strong>VEGASBETT</strong> — jugá distinto, jugá seguro.
+        <span class="gold-promo">Bono del 35% en tu <u>primera carga</u> (mínimo $500).</span>
+      </p>
+
+      <!-- Acciones destacadas -->
+      <div class="featured-actions">
+        <a class="btn external" data-ico="🌐" href="https://ganamos.io/" target="_blank" rel="noopener noreferrer">
+          Ir a ganamos.io
+        </a>
+        <button class="btn bonus" data-ico="🎁" id="btnSoyNuevo">
+          Soy nuevo (bono 35%)
+        </button>
+        <button class="btn secondary" data-ico="ℹ️" id="btnMasInfo">
+          Más info
+        </button>
+      </div>
+
+      <!-- Banner de promociones (se inyecta por JS) -->
+      <div id="promoMount"></div>
+
+      <!-- Botones operativos -->
+      <div class="grid">
+        <button class="btn ok" data-ico="📞" id="btnPrincipal">Número principal (WhatsApp)</button>
+        <button class="btn secondary" data-ico="🛟" id="btnRespaldo">En caso de reclamo (WhatsApp)</button>
+        <a class="btn warn" data-ico="💵" href="cargar.html">Quiero Cargar</a>
+        <a class="btn" data-ico="💸" href="retirar.html">Quiero Retirar</a>
+      </div>
+
+      <div id="adminPanel" class="admin-panel hidden">
+        <h3>Panel rápido</h3>
+        <p class="sub">Actualizá números al vuelo o generá un link compartible.</p>
+        <div class="form">
+          <div><label>PIN</label><input id="pin" type="password" placeholder="Ingresá tu PIN"/></div>
+          <div><label>Número principal</label><input id="nPrincipal" type="text" placeholder="5492233415879"/></div>
+          <div><label>Número respaldo (reclamos)</label><input id="nRespaldo" type="text" placeholder="5492233458173"/></div>
+          <div class="cta-row">
+            <button id="aplicarAdmin" class="btn ok">Aplicar ahora</button>
+            <button id="genLink" class="btn secondary">Crear link compartible</button>
+          </div>
+          <div class="copy"><input id="linkResult" type="text" readonly value=""/><button class="copybtn" data-copy="#linkResult">Copiar link</button></div>
+          <p class="small">Tip: compartí ese link y la página usará esos números automáticamente.</p>
+        </div>
+      </div>
+
+      <footer class="center">
+        © <span id="year"></span> VegasBett • Jugá responsable • +18
+      </footer>
+
+      <!-- Modal: Más info / Spech -->
+      <div id="modalInfo" class="vb-modal hidden" aria-hidden="true" role="dialog" aria-labelledby="modalInfoTitle">
+        <div class="vb-modal__backdrop" data-close="1"></div>
+        <div class="vb-modal__card">
+          <div class="vb-modal__head">
+            <h3 id="modalInfoTitle">Bono de Bienvenida 35%</h3>
+            <button class="vb-modal__close" id="modalClose" aria-label="Cerrar">✕</button>
+          </div>
+          <div class="vb-modal__body">
+            <p class="small" style="margin-top:-6px">
+              *Válido en la <strong>primera</strong> carga, con un mínimo de <strong>$500</strong> (ARS).
+            </p>
+            <pre id="spechText" class="vb-pre">
+🎰 ¡BIENVENID@ A VEGASBETT! 🎰
+💥 Estás a punto de entrar al lugar donde TODO puede pasar...
+🔥 BONO EXCLUSIVO del +35% en tu primera recarga 💸
+
+🎯 ¿Estás list@ para empezar con ventaja?
+Esto es lo que te espera:
+
+🟣 Slots explosivos con premios que crecen minuto a minuto
+🟡 Casino en vivo 24/7 con crupiers reales
+💸 Cargas desde $ 500 y retiros instantáneos
+📈 Hasta $250.000 por día – sin vueltas, sin excusas
+
+📝 Decime tu nombre o apodo y te creo la cuenta en segundos
+
+🔐 Plataforma 100% segura, verificada y con atención personalizada (Ganamos.io)
+🍀 Hoy es el día. Hoy puede ser tu primera GRAN jugada.
+
+🔥 ¡Respondé este mensaje y activá tu lugar en la mesa!
+🎉 VegasBett te espera… con los dados cargados a tu favor 🎲💰
+            </pre>
+          </div>
+          <div class="vb-modal__foot">
+            <button class="btn secondary" id="copySpech" data-ico="📋">Copiar texto</button>
+            <button class="btn ok" id="modalOk" data-ico="✅">Entendido</button>
+          </div>
+        </div>
+      </div>
+      <!-- /Modal -->
+    </div>
+  </div>
+  <div id="toast" class="toast">Copiado</div>
+</body>
+</html>
