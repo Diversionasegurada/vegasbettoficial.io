@@ -206,4 +206,62 @@ h1.center{
   width:auto !important;
   height:auto !important;
 }
+/* ====== PARCHE VISUAL ====== */
+
+/* Centrado reutilizable */
+.center{ text-align:center; }
+
+/* Reset links dentro de botones para que NO queden azules/subrayados */
+a{ color: inherit; }
+a.btn, .btn{ color: var(--text); text-decoration: none; }
+a.btn:visited{ color: var(--text); text-decoration: none; }
+
+/* Botón base más consistente */
+.btn{
+  display:flex; align-items:center; justify-content:center;
+  padding:12px 16px; border-radius:14px;
+  min-height:56px;
+  transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+}
+
+/* Grid prolija */
+.grid{ display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap:12px; margin:16px 0 8px; }
+@media (max-width:620px){ .grid{ grid-template-columns:1fr } .btn{ min-height:52px; } }
+
+/* Logo SIEMPRE chico */
+.logo-hero{ display:flex; justify-content:center; margin:10px 0 8px; }
+.logo-hero .logo-img{
+  max-width:160px !important; width:100% !important; height:auto !important;
+  border-radius:12px; box-shadow:0 6px 20px rgba(0,0,0,.35); display:block;
+}
+@media (max-width:640px){ .logo-hero .logo-img{ max-width:120px !important; } }
+
+/* Leyenda dorada */
+.gold-legend{
+  color: var(--gold); font-weight:600; margin:8px auto 12px; max-width:900px; line-height:1.25; text-align:center;
+}
+.gold-legend strong, .gold-legend .gold-promo{
+  background: linear-gradient(180deg,#fff4c9 0%, #edd693 35%, #e0c178 55%, #b78b38 100%);
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+  filter:drop-shadow(0 1px 0 rgba(0,0,0,.25));
+}
+
+/* Shine del botón bono SIN desbordar */
+.btn.bonus{ position:relative; overflow:hidden; }
+.btn.bonus::after{
+  content:""; position:absolute; inset:-40% -120% auto auto; width:40%; height:200%;
+  transform: rotate(25deg);
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,.25) 50%, transparent 100%);
+  animation: vb-shine 2.8s linear infinite; pointer-events:none;
+}
+@keyframes vb-shine{ 0%{transform:translateX(-120%) rotate(25deg)} 100%{transform:translateX(220%) rotate(25deg)} }
+
+/* Banner promo (clickeable) */
+.promo-ticker{ position:relative; overflow:hidden; }
+.promo-led{
+  width:10px; height:10px; border-radius:999px; flex:0 0 auto;
+  background:#ffd56a; box-shadow:0 0 12px #ffd56a, 0 0 28px rgba(255,213,106,.6);
+  animation: promoBlink 1.4s ease-in-out infinite;
+}
+@keyframes promoBlink{ 0%,100%{ opacity:1 } 50%{ opacity:.45 } }
 
