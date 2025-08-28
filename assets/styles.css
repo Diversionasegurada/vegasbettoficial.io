@@ -18,3 +18,170 @@
 .promo-cta{ margin-left:auto; font-weight:700; color:var(--gold); }
 @keyframes promoBlink{ 0%,100%{ opacity:1 } 50%{ opacity:.4 } }
 .hidden{ display:none }
+/* === OVERRIDES ESTÉTICA v3 — VegasBett === */
+
+/* Paleta más sobria (gris frío + dorado) */
+:root{
+  --bg:#0a0b0f;
+  --card:#13141b;
+  --violeta:#2f3240;   /* gris azulado, suave */
+  --violeta2:#42465a;
+  --gold:#e0c178;      /* dorado más “real” */
+  --text:#f3f4f6;
+  --muted:#b6bac7;
+}
+
+/* Fondo y legibilidad */
+html, body { background:#0a0b0f; }
+body{
+  background:
+    radial-gradient(1200px 800px at 20% -10%, rgba(255,255,255,.04), transparent 55%) no-repeat fixed,
+    linear-gradient(180deg, #0a0b0f, #0a0b0f);
+  color:var(--text);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "calt" 1, "kern" 1;
+}
+
+/* Tarjeta “glass” más prolija */
+.card{
+  background:
+    radial-gradient(180% 140% at 50% -30%, rgba(255,255,255,.05), transparent 45%),
+    rgba(19,20,27,.88);
+  border:1px solid rgba(255,255,255,.10);
+  backdrop-filter: blur(2px) saturate(1.05);
+  padding:22px 20px 16px;
+  box-shadow: 0 18px 60px rgba(0,0,0,.45);
+}
+
+/* Títulos y textos */
+h1.center{
+  margin: 10px 0 4px;
+  font-size: clamp(22px, 2.2vw + 14px, 28px);
+  letter-spacing:-.3px;
+}
+.sub{ color:var(--muted); }
+
+/* Logo compacto y parejo */
+:root{ --logo-size: 120px; } /* podés subir/bajar acá: 110–140px */
+.logo-hero{ display:flex; justify-content:center; margin:10px 0 6px; }
+.logo-hero .logo-img{
+  width: var(--logo-size); height:auto; display:block;
+  border-radius:12px; box-shadow: 0 6px 20px rgba(0,0,0,.35);
+}
+
+/* Leyenda dorada más “premium” */
+.gold-legend{
+  color: var(--gold);
+  font-weight: 600;
+  margin: 8px auto 12px;
+  max-width: 900px;
+  line-height: 1.25;
+  text-align:center;
+}
+.gold-legend strong, .gold-legend .gold-promo{
+  background: linear-gradient(180deg,#fff4c9 0%, #edd693 35%, #e0c178 55%, #b78b38 100%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  filter: drop-shadow(0 1px 0 rgba(0,0,0,.25));
+}
+
+/* Botones más sólidos y consistentes */
+.btn{
+  min-height:56px;
+  background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+  border:1px solid rgba(255,255,255,.12);
+  transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+}
+.btn:hover{ transform:translateY(-1px); box-shadow:0 10px 26px rgba(0,0,0,.38) }
+.btn:active{ transform:translateY(0) }
+.btn:focus-visible{ outline:2px solid rgba(224,193,120,.65); outline-offset:2px }
+
+/* Variantes */
+.btn.ok{
+  background: linear-gradient(180deg, rgba(46,125,50,.20), rgba(46,125,50,.10));
+  border-color: rgba(46,125,50,.35);
+}
+.btn.warn{
+  background: linear-gradient(180deg, rgba(138,43,43,.24), rgba(138,43,43,.10));
+  border-color: rgba(138,43,43,.40);
+}
+.btn.secondary{
+  background: linear-gradient(180deg, rgba(47,50,64,.28), rgba(47,50,64,.12));
+  border-color: rgba(255,255,255,.10);
+}
+
+/* Acciones destacadas más prolijas */
+.featured-actions{
+  display:flex; gap:12px; justify-content:center;
+  margin: 10px auto 12px; max-width: 920px;
+  position:relative;
+}
+.featured-actions::before{
+  content:""; position:absolute; left:0; right:0; top:-8px; height:1px;
+  background:linear-gradient(90deg, transparent, rgba(255,255,255,.08), transparent);
+}
+.featured-actions .btn{ font-weight:700 }
+
+/* Bono con “shine” sutil */
+.btn.bonus{ position:relative;
+  background: linear-gradient(180deg, rgba(224,193,120,.26), rgba(224,193,120,.12));
+  border-color: rgba(224,193,120,.45);
+}
+.btn.bonus::after{
+  content:""; position:absolute; inset:-40% -120% auto auto; width:40%; height:200%;
+  transform: rotate(25deg);
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,.25) 50%, transparent 100%);
+  animation: vb-shine 2.8s linear infinite; pointer-events:none;
+}
+@keyframes vb-shine{ 0%{transform:translateX(-120%) rotate(25deg)} 100%{transform:translateX(220%) rotate(25deg)} }
+
+/* Grid más respirado */
+.grid{ gap:12px; margin:16px 0 8px }
+@media (max-width:620px){ .grid{ grid-template-columns:1fr } .btn{ min-height:52px } }
+
+/* Inputs más “finos” */
+.form input{
+  background:#0f1117; border:1px solid rgba(255,255,255,.14);
+}
+.form input:focus{
+  border-color: rgba(224,193,120,.55); outline: none; box-shadow: 0 0 0 2px rgba(224,193,120,.20);
+}
+
+/* Toast más visible */
+.toast{
+  background:#12131a; border:1px solid rgba(255,255,255,.16);
+  box-shadow:0 12px 28px rgba(0,0,0,.45);
+}
+
+/* Banner promo “Las Vegas” (neón suave) */
+.promo-ticker{
+  display:flex; align-items:center; gap:10px;
+  padding:12px 14px; border-radius:14px;
+  background: linear-gradient(180deg, rgba(224,193,120,.16), rgba(224,193,120,.06));
+  border:1px solid rgba(224,193,120,.45);
+  text-decoration:none; color:var(--text);
+  box-shadow: 0 10px 30px rgba(0,0,0,.35), 0 0 22px rgba(224,193,120,.10);
+  margin:12px auto 14px; max-width:900px;
+  transition:.15s; cursor:pointer;
+}
+.promo-ticker:hover{ transform: translateY(-1px); box-shadow:0 14px 38px rgba(0,0,0,.42), 0 0 26px rgba(224,193,120,.14) }
+.promo-led{
+  width:10px; height:10px; border-radius:999px; flex:0 0 auto;
+  background:#ffd56a; box-shadow:0 0 12px #ffd56a, 0 0 28px rgba(255,213,106,.6);
+  animation: promoBlink 1.4s ease-in-out infinite;
+}
+.promo-cta{ margin-left:auto; font-weight:800; color:var(--gold); letter-spacing:.2px }
+@keyframes promoBlink{ 0%,100%{ opacity:1 } 50%{ opacity:.45 } }
+
+/* Modal 18+ y “Más info” más integrados */
+.age-modal, .vb-modal__card{
+  background: rgba(19,20,27,.96);
+  border:1px solid rgba(255,255,255,.12);
+  box-shadow: 0 18px 60px rgba(0,0,0,.55);
+}
+
+/* Pequeños ajustes */
+.badge{ background:rgba(66,70,90,.25); border:1px solid rgba(66,70,90,.5) }
+.badge-admin{ background:rgba(224,193,120,.10); border-color:rgba(224,193,120,.4) }
+.copybtn{ background:#12131a; border-color:rgba(255,255,255,.16) }
+
