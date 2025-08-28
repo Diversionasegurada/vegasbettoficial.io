@@ -1,10 +1,12 @@
-// Lógica principal VegasBett
+// ===============================
+// Lógica principal VegasBett (privado)
+// ===============================
 (function () {
   const $  = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
   const CFG = window.VEGASBETT_CONFIG || {};
 
-  // Utils --------------------
+  // -------- Utilidades --------
   function waUrl(number, text) {
     const msg = encodeURIComponent(text || "");
     return number ? `https://wa.me/${number}?text=${msg}` : `https://wa.me/?text=${msg}`;
@@ -31,75 +33,45 @@
     t.classList.add("show");
     setTimeout(() => t.classList.remove("show"), 1600);
   }
-  function todayKey(){ const d=new Date(); const y=d.getFullYear(); const m=String(d.getMonth()+1).padStart(2,'0'); const da=String(d.getDate()).padStart(2,'0'); return `${y}${m}${da}`; }
-  const HIDE_KEY = "VB_PROMO_HIDE_"+todayKey();
+  function todayPromoPercent() {
+    const map = CFG.PROMOS || {};
+    const p = Number(map[(new Date()).getDay()] || 0);
+    return isNaN(p) ? 0 : p;
+  }
 
   // Año en footer
   const yearEl = document.getElementById("year");
   if (yearEl) yearEl.textContent = new Date().getFullYear();
 
-  // Overrides por URL (emergencia) ----
+  // Overrides por URL (emergencia)
   try {
     const url = new URL(location.href);
     const p = url.searchParams.get("principal");
     const r = url.searchParams.get("respaldo");
-    const promos = url.searchParams.get("promos"); // on / off
     if (p) CFG.NUMERO_PRINCIPAL = p;
     if (r) CFG.NUMERO_RESPALDO  = r;
-    if (promos==='off') localStorage.setItem(HIDE_KEY,'1');
-    if (promos==='on')  localStorage.removeItem(HIDE_KEY);
   } catch (e) {}
 
-  // ====== PROMO TICKER ======
-  (function promoTicker(){
-    if (!CFG.SHOW_PROMO_TICKER) return;
-    if (localStorage.getItem(HIDE_KEY) === '1') return;
+  // Logo click -> Cargar
+  $("#logoHero")?.addEventListener("click", ()=> location.href = "cargar.html");
 
-    const dias = ["domingo","lunes","martes","miercoles","jueves","viernes","sabado"];
-    const idx = new Date().getDay();
-    const hoy = dias[idx];
-    const pct = (CFG.PROMOS && CFG.PROMOS[hoy]) || 0;
+  // Mostrar botón Admin con long-press en logo (o Shift+Alt+A)
+  const adminBtn = $("#adminToggle");
+  const logo = $("#logoHero");
+  let pressTimer;
+  function showAdmin(){ if (adminBtn) adminBtn.style.display = 'inline-block'; toast('Admin visible'); }
+  logo?.addEventListener('mousedown', ()=> { pressTimer = setTimeout(showAdmin, 700); });
+  logo?.addEventListener('touchstart', ()=> { pressTimer = setTimeout(showAdmin, 700); }, {passive:true});
+  ['mouseup','mouseleave','touchend','touchcancel'].forEach(ev => logo?.addEventListener(ev, ()=> clearTimeout(pressTimer)));
+  document.addEventListener('keydown', (e)=>{ if(e.shiftKey && e.altKey && e.code==='KeyA') showAdmin(); });
 
-    if (!pct) return; // no hay promo hoy
-
-    const mount = document.getElementById('promoMount');
-    if (!mount) return;
-
-    const min = CFG.PROMO_MIN || 2000;
-    const max = CFG.PROMO_MAX || 20000;
-
-    const wrap = document.createElement('div');
-    wrap.className = 'promo-ticker';
-    wrap.innerHTML = `
-      <div class="promo-row">
-        <div class="promo-day">Promo ${hoy[0].toUpperCase()+hoy.slice(1)}</div>
-        <div class="promo-msg">Hoy tenés <strong>+${pct}%</strong> de BONO en cargas de
-          <strong>${min.toLocaleString('es-AR')}</strong> a <strong>${max.toLocaleString('es-AR')}</strong>.
-        </div>
-        <div class="promo-close"><button id="promoHideBtn" title="Ocultar hoy">✕ Ocultar hoy</button></div>
-      </div>`;
-    mount.replaceChildren(wrap);
-
-    // Ocultar (solo si admin-on)
-    $('#promoHideBtn')?.addEventListener('click', ()=>{
-      if (!document.body.classList.contains('admin-on')) return;
-      localStorage.setItem(HIDE_KEY,'1');
-      mount.innerHTML='';
-      toast('Banner ocultado por hoy');
-    });
-
-    // Clic en logo → cargar
-    $('#logoHero')?.addEventListener('click', ()=>{
-      location.href='cargar.html';
-    });
-  })();
-
-  // ====== HOME: botones ======
+  // Home: botones directos
   if ($("#btnPrincipal")) {
     $("#btnPrincipal").addEventListener("click", () => {
       const text = `Hola, soy ____.
 Necesito atención del *número principal*.
 Gracias.`;
+      if (typeof fbq === "function") { fbq("track", "Contact", { flow: "direct", target: "principal" }); }
       location.href = waUrl(CFG.NUMERO_PRINCIPAL, text);
     });
   }
@@ -108,55 +80,88 @@ Gracias.`;
       const text = `Hola, soy ____.
 Necesito atención del *número de reclamos*.
 Gracias.`;
+      if (typeof fbq === "function") { fbq("track", "Contact", { flow: "direct", target: "respaldo" }); }
       location.href = waUrl(CFG.NUMERO_RESPALDO, text);
     });
   }
+  // Soy nuevo (bono 35%)
   if (document.querySelector('#btnSoyNuevo')) {
     document.querySelector('#btnSoyNuevo').addEventListener('click', () => {
       const texto = "Soy nuevo, quiero mi bono del 35%";
-      const url = CFG.NUMERO_PRINCIPAL ? `https://wa.me/${CFG.NUMERO_PRINCIPAL}?text=${encodeURIComponent(texto)}` : `https://wa.me/?text=${encodeURIComponent(texto)}`;
-      location.href = url;
+      if (typeof fbq === "function") { fbq("track", "Contact", { flow: "bono_nuevo" }); }
+      location.href = waUrl(CFG.NUMERO_PRINCIPAL, texto);
     });
   }
 
-  // ====== CARGAR ======
+  // ===== Banner promo en Home =====
+  (function initPromoTicker(){
+    const el = document.getElementById('promoTicker');
+    if (!el) return;
+    const pct = todayPromoPercent();
+    const min = CFG.PROMO_MIN || 2000;
+    const max = CFG.PROMO_MAX || 20000;
+
+    // overrides por URL: ?promos=off / ?promos=on
+    let force = null;
+    try {
+      const q = new URL(location.href).searchParams.get('promos');
+      if (q === 'off') force = false;
+      if (q === 'on')  force = true;
+    } catch(e){}
+
+    const shouldShow = (force !== null) ? force : (!!CFG.SHOW_PROMO_TICKER && pct > 0);
+    if (!shouldShow) { el.classList.add('hidden'); return; }
+
+    const txt = document.getElementById('promoText');
+    if (txt) txt.textContent = `Hoy: bono +${pct}% en cargas de ${moneyFormat(min)} a ${moneyFormat(max)}.`;
+    el.classList.remove('hidden');
+  })();
+
+  // ===== CARGAR =====
   if ($("#formCargar")) {
     const form  = $("#formCargar");
     const paso2 = $("#paso2");
     const cbu   = $("#cbu");
     const alias = $("#alias");
 
+    // Detectar si entró por promo
+    const qp = new URL(location.href).searchParams;
+    const promoOn  = qp.get('promo') === 'on';
+    const promoPct = todayPromoPercent();
+    const promoMin = CFG.PROMO_MIN || 2000;
+    const promoMax = CFG.PROMO_MAX || 20000;
+
+    // Nota “promo activa”
+    if (promoOn && promoPct > 0) {
+      const note = document.createElement('div');
+      note.className = 'note'; note.style.marginTop = '8px';
+      note.textContent = `Promo +${promoPct}% activa hoy en cargas de ${moneyFormat(promoMin)} a ${moneyFormat(promoMax)}.`;
+      form.parentNode.insertBefore(note, form);
+    }
+
     if (cbu)   cbu.value   = CFG.CBU   || "";
     if (alias) alias.value = CFG.ALIAS || "";
 
     $$(".copybtn").forEach(btn => btn.addEventListener("click", (e) => {
       e.preventDefault();
-      const ok = copyFromSelector(btn.getAttribute("data-copy"));
-      if (!ok) alert('No se pudo copiar');
+      copyFromSelector(btn.getAttribute("data-copy"));
     }));
-
-    // si hay promo hoy, repetimos nota arriba
-    (function mountPromoEnCargar(){
-      const mount = document.getElementById('promoMount');
-      if (!mount) return;
-      const dias = ["domingo","lunes","martes","miercoles","jueves","viernes","sabado"];
-      const idx = new Date().getDay(); const hoy = dias[idx];
-      const pct = (CFG.PROMOS && CFG.PROMOS[hoy]) || 0;
-      if (!CFG.SHOW_PROMO_TICKER || !pct || localStorage.getItem("VB_PROMO_HIDE_"+(new Date().toISOString().slice(0,10).replace(/-/g,'')))==='1') return;
-      const min = CFG.PROMO_MIN || 2000;
-      const max = CFG.PROMO_MAX || 20000;
-      const box = document.createElement('div');
-      box.className='promo-ticker';
-      box.innerHTML = `<div class="promo-row"><div class="promo-msg">Promo de hoy: <strong>+${pct}%</strong> en cargas de
-      <strong>${min.toLocaleString('es-AR')}</strong> a <strong>${max.toLocaleString('es-AR')}</strong>.</div></div>`;
-      mount.replaceChildren(box);
-    })();
 
     form.addEventListener("submit", (e) => {
       e.preventDefault();
       const nombre = $("#nombre").value.trim();
       const monto  = $("#monto").value.trim();
       if (!nombre || !monto) { alert("Completá nombre y monto."); return; }
+
+      // Rango obligatorio solo si vienen por promo
+      if (promoOn && promoPct > 0) {
+        const val = Number(monto);
+        if (isNaN(val) || val < promoMin || val > promoMax) {
+          alert(`Para aplicar el bono +${promoPct}%, la carga debe ser entre ${moneyFormat(promoMin)} y ${moneyFormat(promoMax)}.`);
+          return;
+        }
+      }
+
       paso2.classList.remove("hidden");
       paso2.scrollIntoView({ behavior: "smooth", block: "start" });
     });
@@ -167,17 +172,28 @@ Gracias.`;
         const nombre = $("#nombre").value.trim();
         const monto  = $("#monto").value.trim();
         if (!nombre || !monto) { alert("Completá nombre y monto."); return; }
+
+        if (promoOn && promoPct > 0) {
+          const val = Number(monto);
+          if (isNaN(val) || val < promoMin || val > promoMax) {
+            alert(`Para aplicar el bono +${promoPct}%, la carga debe ser entre ${moneyFormat(promoMin)} y ${moneyFormat(promoMax)}.`);
+            return;
+          }
+        }
+
+        const extra = (promoOn && promoPct > 0) ? `\n[PROMO +${promoPct}% válida hoy]` : '';
         const text = `Hola, soy *${nombre}*.
 Quiero *CARGAR* ${moneyFormat(monto)}.
-CBU/ALIAS copiado. Envío el comprobante aquí.`;
+CBU/ALIAS copiado. Envío el comprobante aquí.${extra}`;
+        if (typeof fbq === "function") { fbq("track", "Contact", { flow: "cargar" }); }
         location.href = waUrl(CFG.NUMERO_PRINCIPAL, text);
       });
     }
   }
 
-  // ====== RETIRAR ======
+  // ===== RETIRAR (solo DATOS) =====
   if (document.querySelector("#formRetirar")) {
-    const titularInput = document.querySelector("#titularR");
+    const titularInput  = document.querySelector("#titularR");
     const cbuAliasInput = document.querySelector("#cbuAliasR");
     if (titularInput && CFG.TITULAR) titularInput.value = CFG.TITULAR;
     if (cbuAliasInput) cbuAliasInput.value = (CFG.ALIAS || CFG.CBU || "");
@@ -191,62 +207,41 @@ CBU/ALIAS copiado. Envío el comprobante aquí.`;
       const monto    = document.querySelector("#montoR").value.trim();
 
       if (!usuario || !titular || !cbuAlias || !monto) {
-        alert("Completá todos los campos.");
-        return;
+        alert("Completá todos los campos."); return;
       }
       if (Number(monto) > 250000) {
-        alert("El monto máximo por retiro es $250.000");
-        return;
+        alert("El monto máximo por retiro es $250.000"); return;
       }
 
       const text = `Usuario: ${usuario}
 Titular: ${titular}
 CBU o Alias: ${cbuAlias}
 Monto a retirar: ${moneyFormat(monto)}`;
-
-      const url = waUrl(CFG.NUMERO_PRINCIPAL, text);
-      window.location.href = url;
+      if (typeof fbq === "function") { fbq("track", "Contact", { flow: "retirar" }); }
+      window.location.href = waUrl(CFG.NUMERO_PRINCIPAL, text);
     });
   }
 
-  // ===== Admin oculto (desbloqueo) =====
-  (function adminUnlock(){
-    const logo = document.getElementById('logoHero');
-    const adminBtn = document.getElementById('adminToggle');
-    const panel = document.getElementById('adminPanel');
-    let tId=null;
+  // ===== Panel Admin =====
+  const adminToggle = $("#adminToggle");
+  const panel = $("#adminPanel");
+  const pin   = $("#pin");
+  const nP    = $("#nPrincipal");
+  const nR    = $("#nRespaldo");
 
-    function showAdminBtn(){
-      adminBtn?.classList.remove('hidden');
-      document.body.classList.add('admin-on');
-    }
-
-    // Long-press en logo (~700ms)
-    logo?.addEventListener('pointerdown', ()=>{
-      tId=setTimeout(showAdminBtn, 700);
-    });
-    ['pointerup','pointerleave','pointercancel'].forEach(ev=> logo?.addEventListener(ev, ()=>{ if(tId){clearTimeout(tId); tId=null;} }));
-
-    // Acceso rápido: Shift+Alt+A
-    document.addEventListener('keydown',(e)=>{
-      if (e.shiftKey && e.altKey && (e.key==='a' || e.key==='A')) showAdminBtn();
-    });
-
-    adminBtn?.addEventListener('click', ()=> panel?.classList.toggle('hidden'));
-  })();
-
-  // Panel Admin acciones
-  (function adminPanelActions(){
-    const pin   = $("#pin");
-    const nP    = $("#nPrincipal");
-    const nR    = $("#nRespaldo");
-    $("#aplicarAdmin")?.addEventListener("click", () => {
+  if (adminToggle && panel) {
+    adminToggle.addEventListener("click", () => panel.classList.toggle("hidden"));
+  }
+  if ($("#aplicarAdmin")) {
+    $("#aplicarAdmin").addEventListener("click", () => {
       if (!pin.value || pin.value !== (CFG.EMERGENCY_PIN || "")) { alert("PIN incorrecto"); return; }
       if (nP && nP.value) CFG.NUMERO_PRINCIPAL = nP.value.trim();
       if (nR && nR.value) CFG.NUMERO_RESPALDO  = nR.value.trim();
       toast("Números aplicados (solo en esta sesión)");
     });
-    $("#genLink")?.addEventListener("click", () => {
+  }
+  if ($("#genLink")) {
+    $("#genLink").addEventListener("click", () => {
       if (!pin.value || pin.value !== (CFG.EMERGENCY_PIN || "")) { alert("PIN incorrecto"); return; }
       const base = location.origin + location.pathname.replace(/index\.html?$/i, "");
       const qp = new URLSearchParams();
@@ -256,7 +251,7 @@ Monto a retirar: ${moneyFormat(monto)}`;
       const out = $("#linkResult");
       if (out) { out.value = link; out.select(); document.execCommand("copy"); toast("Link generado"); }
     });
-  })();
+  }
 
   // ---- Age Gate 18+ ----
   (function ageGate(){
@@ -265,7 +260,6 @@ Monto a retirar: ${moneyFormat(monto)}`;
     if (localStorage.getItem('AGE_OK') === '1') return;
 
     const minAge = C.EDAD_MINIMA || 18;
-
     const backdrop = document.createElement('div');
     backdrop.className = 'age-backdrop';
     backdrop.innerHTML = `
@@ -289,7 +283,7 @@ Monto a retirar: ${moneyFormat(monto)}`;
     });
   })();
 
-  // ===== Modal "Más info" (spech) =====
+  // ===== Modal "Más info" =====
   (function(){
     const modal   = document.getElementById('modalInfo');
     const btnOpen = document.getElementById('btnMasInfo');
@@ -319,4 +313,5 @@ Monto a retirar: ${moneyFormat(monto)}`;
       );
     });
   })();
+
 })();
