@@ -1,50 +1,29 @@
-/* === Promo ticker clickeable === */
-.promo-ticker{
-  display:flex; align-items:center; gap:10px;
-  padding:10px 14px; border-radius:14px;
-  background: linear-gradient(180deg, rgba(215,183,110,.16), rgba(215,183,110,.06));
-  border:1px solid rgba(215,183,110,.35);
-  text-decoration:none; color:var(--text);
-  box-shadow:0 8px 26px rgba(0,0,0,.28);
-  margin:10px auto 12px; max-width:900px;
-  transition:.15s; cursor:pointer;
-}
-.promo-ticker:hover{ transform: translateY(-1px); box-shadow:0 12px 34px rgba(0,0,0,.35); }
-.promo-led{
-  width:10px; height:10px; border-radius:999px;
-  background:#ffd56a; box-shadow:0 0 12px #ffd56a, 0 0 28px rgba(255,213,106,.6);
-  animation: promoBlink 1.4s ease-in-out infinite;
-}
-.promo-cta{ margin-left:auto; font-weight:700; color:var(--gold); }
-@keyframes promoBlink{ 0%,100%{ opacity:1 } 50%{ opacity:.4 } }
-.hidden{ display:none }
-/* === OVERRIDES ESTÉTICA v3 — VegasBett === */
-
-/* Paleta más sobria (gris frío + dorado) */
 :root{
   --bg:#0a0b0f;
   --card:#13141b;
-  --violeta:#2f3240;   /* gris azulado, suave */
+  --violeta:#2f3240;
   --violeta2:#42465a;
-  --gold:#e0c178;      /* dorado más “real” */
+  --gold:#e0c178;
   --text:#f3f4f6;
   --muted:#b6bac7;
+  --ok:#2e7d32;
+  --warn:#8a2b2b;
 }
 
-/* Fondo y legibilidad */
-html, body { background:#0a0b0f; }
+*{box-sizing:border-box}
+html,body{background:#0a0b0f}
 body{
+  margin:0; color:var(--text);
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
   background:
     radial-gradient(1200px 800px at 20% -10%, rgba(255,255,255,.04), transparent 55%) no-repeat fixed,
-    linear-gradient(180deg, #0a0b0f, #0a0b0f);
-  color:var(--text);
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
-  font-feature-settings: "calt" 1, "kern" 1;
+    linear-gradient(180deg,#0a0b0f,#0a0b0f);
+  -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
 }
 
-/* Tarjeta “glass” más prolija */
+.container{min-height:100vh; display:grid; place-items:center; padding:22px}
 .card{
+  width:min(960px, 95vw);
   background:
     radial-gradient(180% 140% at 50% -30%, rgba(255,255,255,.05), transparent 45%),
     rgba(19,20,27,.88);
@@ -52,42 +31,73 @@ body{
   backdrop-filter: blur(2px) saturate(1.05);
   padding:22px 20px 16px;
   box-shadow: 0 18px 60px rgba(0,0,0,.45);
+  border-radius:22px;
 }
 
-/* Títulos y textos */
-h1.center{
-  margin: 10px 0 4px;
-  font-size: clamp(22px, 2.2vw + 14px, 28px);
-  letter-spacing:-.3px;
-}
-.sub{ color:var(--muted); }
+.header{display:flex; justify-content:space-between; align-items:center; gap:10px}
+.brand{display:flex; align-items:center; gap:10px; font-weight:700}
+.badge{background:rgba(66,70,90,.25); border:1px solid rgba(66,70,90,.5); color:#fff; padding:4px 10px; border-radius:999px; font-size:12px}
+.badge-pill{padding:6px 12px; border-radius:999px; border:1px solid rgba(255,255,255,.18); cursor:pointer; user-select:none}
+.badge-admin{background:rgba(224,193,120,.10); border-color:rgba(224,193,120,.4)}
 
-/* Logo compacto y parejo */
-:root{ --logo-size: 120px; } /* podés subir/bajar acá: 110–140px */
-.logo-hero{ display:flex; justify-content:center; margin:10px 0 6px; }
+.center{text-align:center}
+.sub{color:var(--muted); margin-top:4px}
+
+.logo-hero{ display:flex; justify-content:center; margin:10px 0 8px; }
 .logo-hero .logo-img{
-  width: var(--logo-size); height:auto; display:block;
-  border-radius:12px; box-shadow: 0 6px 20px rgba(0,0,0,.35);
+  max-width:160px; width:100%; height:auto; display:block;
+  border-radius:12px; box-shadow:0 6px 20px rgba(0,0,0,.35);
 }
+@media (max-width:640px){ .logo-hero .logo-img{ max-width:120px } }
 
-/* Leyenda dorada más “premium” */
+h1.center{ margin:10px 0 4px; font-size:clamp(22px, 2.2vw + 14px, 28px); letter-spacing:-.3px; }
+
+/* Leyenda dorada */
 .gold-legend{
-  color: var(--gold);
-  font-weight: 600;
-  margin: 8px auto 12px;
-  max-width: 900px;
-  line-height: 1.25;
-  text-align:center;
+  color:var(--gold); font-weight:600; margin:8px auto 12px; max-width:900px; line-height:1.25; text-align:center;
 }
 .gold-legend strong, .gold-legend .gold-promo{
   background: linear-gradient(180deg,#fff4c9 0%, #edd693 35%, #e0c178 55%, #b78b38 100%);
-  -webkit-background-clip: text; background-clip: text; color: transparent;
-  filter: drop-shadow(0 1px 0 rgba(0,0,0,.25));
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+  filter:drop-shadow(0 1px 0 rgba(0,0,0,.25));
 }
 
-/* Botones más sólidos y consistentes */
+/* Banner promo */
+.promo-ticker{
+  display:flex; align-items:center; gap:10px;
+  padding:12px 14px; border-radius:14px;
+  background: linear-gradient(180deg, rgba(224,193,120,.16), rgba(224,193,120,.06));
+  border:1px solid rgba(224,193,120,.45);
+  text-decoration:none; color:var(--text);
+  box-shadow: 0 10px 30px rgba(0,0,0,.35), 0 0 22px rgba(224,193,120,.10);
+  margin:12px auto 14px; max-width:900px; transition:.15s; cursor:pointer;
+}
+.promo-ticker:hover{ transform: translateY(-1px); box-shadow:0 14px 38px rgba(0,0,0,.42), 0 0 26px rgba(224,193,120,.14) }
+.promo-led{
+  width:10px; height:10px; border-radius:999px; flex:0 0 auto;
+  background:#ffd56a; box-shadow:0 0 12px #ffd56a, 0 0 28px rgba(255,213,106,.6);
+  animation: promoBlink 1.4s ease-in-out infinite;
+}
+.promo-cta{ margin-left:auto; font-weight:800; color:var(--gold); letter-spacing:.2px }
+@keyframes promoBlink{ 0%,100%{ opacity:1 } 50%{ opacity:.45 } }
+.hidden{ display:none }
+
+/* Acciones destacadas */
+.featured-actions{
+  display:flex; gap:12px; justify-content:center;
+  margin:10px auto 12px; max-width:920px; position:relative;
+}
+.featured-actions::before{
+  content:""; position:absolute; left:0; right:0; top:-8px; height:1px;
+  background:linear-gradient(90deg, transparent, rgba(255,255,255,.08), transparent);
+}
+
+/* Botones */
+a{ color:inherit; text-decoration:none }
 .btn{
-  min-height:56px;
+  display:flex; align-items:center; justify-content:center;
+  padding:12px 16px; border-radius:14px;
+  min-height:56px; color:var(--text);
   background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
   border:1px solid rgba(255,255,255,.12);
   transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
@@ -95,35 +105,10 @@ h1.center{
 .btn:hover{ transform:translateY(-1px); box-shadow:0 10px 26px rgba(0,0,0,.38) }
 .btn:active{ transform:translateY(0) }
 .btn:focus-visible{ outline:2px solid rgba(224,193,120,.65); outline-offset:2px }
-
-/* Variantes */
-.btn.ok{
-  background: linear-gradient(180deg, rgba(46,125,50,.20), rgba(46,125,50,.10));
-  border-color: rgba(46,125,50,.35);
-}
-.btn.warn{
-  background: linear-gradient(180deg, rgba(138,43,43,.24), rgba(138,43,43,.10));
-  border-color: rgba(138,43,43,.40);
-}
-.btn.secondary{
-  background: linear-gradient(180deg, rgba(47,50,64,.28), rgba(47,50,64,.12));
-  border-color: rgba(255,255,255,.10);
-}
-
-/* Acciones destacadas más prolijas */
-.featured-actions{
-  display:flex; gap:12px; justify-content:center;
-  margin: 10px auto 12px; max-width: 920px;
-  position:relative;
-}
-.featured-actions::before{
-  content:""; position:absolute; left:0; right:0; top:-8px; height:1px;
-  background:linear-gradient(90deg, transparent, rgba(255,255,255,.08), transparent);
-}
-.featured-actions .btn{ font-weight:700 }
-
-/* Bono con “shine” sutil */
-.btn.bonus{ position:relative;
+.btn.ok{ background: linear-gradient(180deg, rgba(46,125,50,.20), rgba(46,125,50,.10)); border-color:rgba(46,125,50,.35) }
+.btn.warn{ background: linear-gradient(180deg, rgba(138,43,43,.24), rgba(138,43,43,.10)); border-color:rgba(138,43,43,.40) }
+.btn.secondary{ background: linear-gradient(180deg, rgba(47,50,64,.28), rgba(47,50,64,.12)); border-color:rgba(255,255,255,.10) }
+.btn.bonus{ position:relative; overflow:hidden;
   background: linear-gradient(180deg, rgba(224,193,120,.26), rgba(224,193,120,.12));
   border-color: rgba(224,193,120,.45);
 }
@@ -135,133 +120,55 @@ h1.center{
 }
 @keyframes vb-shine{ 0%{transform:translateX(-120%) rotate(25deg)} 100%{transform:translateX(220%) rotate(25deg)} }
 
-/* Grid más respirado */
-.grid{ gap:12px; margin:16px 0 8px }
+.grid{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; margin:16px 0 8px }
 @media (max-width:620px){ .grid{ grid-template-columns:1fr } .btn{ min-height:52px } }
 
-/* Inputs más “finos” */
-.form input{
-  background:#0f1117; border:1px solid rgba(255,255,255,.14);
-}
-.form input:focus{
-  border-color: rgba(224,193,120,.55); outline: none; box-shadow: 0 0 0 2px rgba(224,193,120,.20);
-}
+/* Formularios */
+.form{display:grid; gap:12px; margin-top:10px}
+.form label{display:block; font-size:14px; color:var(--muted); margin-bottom:6px}
+.form input{width:100%; padding:12px 12px; border-radius:12px; border:1px solid rgba(255,255,255,.14); background:#0f1117; color:#fff}
+.form input:focus{ border-color: rgba(224,193,120,.55); outline:none; box-shadow:0 0 0 2px rgba(224,193,120,.20) }
+.form .cta-row{display:flex; gap:10px; flex-wrap:wrap}
 
-/* Toast más visible */
-.toast{
-  background:#12131a; border:1px solid rgba(255,255,255,.16);
-  box-shadow:0 12px 28px rgba(0,0,0,.45);
-}
+.copy{display:flex; gap:8px; align-items:center; margin:8px 0}
+.copy input{flex:1}
+.copybtn{padding:10px 12px; border-radius:10px; border:1px solid rgba(255,255,255,.16); background:#12131a; color:#fff; cursor:pointer}
 
-/* Banner promo “Las Vegas” (neón suave) */
-.promo-ticker{
-  display:flex; align-items:center; gap:10px;
-  padding:12px 14px; border-radius:14px;
-  background: linear-gradient(180deg, rgba(224,193,120,.16), rgba(224,193,120,.06));
-  border:1px solid rgba(224,193,120,.45);
-  text-decoration:none; color:var(--text);
-  box-shadow: 0 10px 30px rgba(0,0,0,.35), 0 0 22px rgba(224,193,120,.10);
-  margin:12px auto 14px; max-width:900px;
-  transition:.15s; cursor:pointer;
-}
-.promo-ticker:hover{ transform: translateY(-1px); box-shadow:0 14px 38px rgba(0,0,0,.42), 0 0 26px rgba(224,193,120,.14) }
-.promo-led{
-  width:10px; height:10px; border-radius:999px; flex:0 0 auto;
-  background:#ffd56a; box-shadow:0 0 12px #ffd56a, 0 0 28px rgba(255,213,106,.6);
-  animation: promoBlink 1.4s ease-in-out infinite;
-}
-.promo-cta{ margin-left:auto; font-weight:800; color:var(--gold); letter-spacing:.2px }
-@keyframes promoBlink{ 0%,100%{ opacity:1 } 50%{ opacity:.45 } }
+.note{background:rgba(224,193,120,.12); border:1px solid rgba(224,193,120,.35); padding:10px 12px; border-radius:12px}
+.clean{margin:6px 0 0 18px}
+.soft{border:none; border-top:1px dashed rgba(255,255,255,.18); margin:12px 0}
 
-/* Modal 18+ y “Más info” más integrados */
+.admin-panel{margin-top:14px; padding:12px; border:1px solid rgba(255,255,255,.12); border-radius:16px; background:#12131a}
+.hidden{display:none}
+
+footer{margin-top:12px; color:var(--muted); font-size:12px}
+
+.toast{position:fixed; bottom:18px; left:50%; transform:translateX(-50%); background:#12131a; border:1px solid rgba(255,255,255,.16); padding:10px 14px; border-radius:999px; opacity:0; pointer-events:none; transition:.22s; box-shadow:0 12px 28px rgba(0,0,0,.45)}
+.toast.show{opacity:1}
+
+/* Modales */
+.age-backdrop{
+  position: fixed; inset: 0; z-index: 9999;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(2px);
+  display: flex; align-items: center; justify-content: center;
+}
 .age-modal, .vb-modal__card{
+  width:min(520px, 92vw);
   background: rgba(19,20,27,.96);
   border:1px solid rgba(255,255,255,.12);
+  border-radius:16px; padding:18px;
   box-shadow: 0 18px 60px rgba(0,0,0,.55);
 }
+.age-modal h3{ margin:0 0 8px }
+.age-actions{ display:flex; gap:10px; flex-wrap:wrap }
+.age-actions .btn{ flex:1 }
+.age-badge{ display:inline-block; padding:2px 8px; border-radius:999px; background: rgba(224,193,120,.15); border:1px solid rgba(224,193,120,.35); color:var(--gold); font-size:12px; margin-left:6px }
 
-/* Pequeños ajustes */
-.badge{ background:rgba(66,70,90,.25); border:1px solid rgba(66,70,90,.5) }
-.badge-admin{ background:rgba(224,193,120,.10); border-color:rgba(224,193,120,.4) }
-.copybtn{ background:#12131a; border-color:rgba(255,255,255,.16) }
-/* ==== Fix duro para que el logo JAMÁS se dispare de tamaño ==== */
-.logo-hero{ display:flex; justify-content:center; margin:10px 0 8px; }
-.logo-hero .logo-img{
-  max-width: 160px !important;   /* ajustá 140/160/180 a gusto */
-  width: 100% !important;
-  height: auto !important;
-  display:block;
-  border-radius:12px;
-  box-shadow:0 6px 20px rgba(0,0,0,.35);
-}
-@media (max-width:640px){
-  .logo-hero .logo-img{ max-width: 120px !important; }
-}
-
-/* Por si hay alguna regla vieja que lo hacía gigante */
-.hero .portada,
-.portada-frame,
-.portada-frame img{
-  max-width:100% !important;
-  width:auto !important;
-  height:auto !important;
-}
-/* ====== PARCHE VISUAL ====== */
-
-/* Centrado reutilizable */
-.center{ text-align:center; }
-
-/* Reset links dentro de botones para que NO queden azules/subrayados */
-a{ color: inherit; }
-a.btn, .btn{ color: var(--text); text-decoration: none; }
-a.btn:visited{ color: var(--text); text-decoration: none; }
-
-/* Botón base más consistente */
-.btn{
-  display:flex; align-items:center; justify-content:center;
-  padding:12px 16px; border-radius:14px;
-  min-height:56px;
-  transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
-}
-
-/* Grid prolija */
-.grid{ display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap:12px; margin:16px 0 8px; }
-@media (max-width:620px){ .grid{ grid-template-columns:1fr } .btn{ min-height:52px; } }
-
-/* Logo SIEMPRE chico */
-.logo-hero{ display:flex; justify-content:center; margin:10px 0 8px; }
-.logo-hero .logo-img{
-  max-width:160px !important; width:100% !important; height:auto !important;
-  border-radius:12px; box-shadow:0 6px 20px rgba(0,0,0,.35); display:block;
-}
-@media (max-width:640px){ .logo-hero .logo-img{ max-width:120px !important; } }
-
-/* Leyenda dorada */
-.gold-legend{
-  color: var(--gold); font-weight:600; margin:8px auto 12px; max-width:900px; line-height:1.25; text-align:center;
-}
-.gold-legend strong, .gold-legend .gold-promo{
-  background: linear-gradient(180deg,#fff4c9 0%, #edd693 35%, #e0c178 55%, #b78b38 100%);
-  -webkit-background-clip:text; background-clip:text; color:transparent;
-  filter:drop-shadow(0 1px 0 rgba(0,0,0,.25));
-}
-
-/* Shine del botón bono SIN desbordar */
-.btn.bonus{ position:relative; overflow:hidden; }
-.btn.bonus::after{
-  content:""; position:absolute; inset:-40% -120% auto auto; width:40%; height:200%;
-  transform: rotate(25deg);
-  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,.25) 50%, transparent 100%);
-  animation: vb-shine 2.8s linear infinite; pointer-events:none;
-}
-@keyframes vb-shine{ 0%{transform:translateX(-120%) rotate(25deg)} 100%{transform:translateX(220%) rotate(25deg)} }
-
-/* Banner promo (clickeable) */
-.promo-ticker{ position:relative; overflow:hidden; }
-.promo-led{
-  width:10px; height:10px; border-radius:999px; flex:0 0 auto;
-  background:#ffd56a; box-shadow:0 0 12px #ffd56a, 0 0 28px rgba(255,213,106,.6);
-  animation: promoBlink 1.4s ease-in-out infinite;
-}
-@keyframes promoBlink{ 0%,100%{ opacity:1 } 50%{ opacity:.45 } }
-
+.vb-modal{ position:fixed; inset:0; z-index:9998; }
+.vb-modal.hidden{ display:none }
+.vb-modal__backdrop{ position:absolute; inset:0; background:rgba(0,0,0,.45) }
+.vb-modal__card{ position:relative; margin:8vh auto 0 }
+.vb-modal__head{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:8px }
+.vb-modal__close{ background:transparent; color:var(--text); border:1px solid rgba(255,255,255,.18); border-radius:8px; padding:6px 10px; cursor:pointer }
+.vb-pre{ white-space:pre-wrap; background:#0f1117; border:1px solid rgba(255,255,255,.12); border-radius:10px; padding:10px; }
