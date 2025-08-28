@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>VegasBett — Cargar saldo</title>
 
-  <link rel="stylesheet" href="assets/styles.css?v=13"/>
-  <script src="assets/config.js?v=13"></script>
-  <script defer src="assets/app.js?v=13"></script>
+  <link rel="stylesheet" href="assets/styles.css?v=16"/>
+  <script src="assets/config.js?v=16"></script>
+  <script defer src="assets/app.js?v=16"></script>
 
   <script>(function(){
     const C=window.VEGASBETT_CONFIG||{};
@@ -31,7 +31,7 @@
       <h1>Ingresá tus datos</h1>
       <p class="sub">Completá el nombre y el monto. Copiá CBU/ALIAS y enviá el comprobante por WhatsApp.</p>
 
-      <!-- Aviso promo (si viene con ?promo=1) -->
+      <!-- Aviso promo si viene ?promo=today o ?promo=new -->
       <div id="promoNotice" class="note hidden"></div>
 
       <form id="formCargar" class="form">
@@ -48,7 +48,7 @@
         <h2>1) Copiá los datos para transferir</h2>
         <div class="copy"><input id="cbu" type="text" readonly value=""/><button class="copybtn" data-copy="#cbu">Copiar CBU</button></div>
         <div class="copy"><input id="alias" type="text" readonly value=""/><button class="copybtn" data-copy="#alias">Copiar ALIAS</button></div>
-        <p class="small">Titular de la cuenta: <strong>Priscila Correa</strong></p>
+        <p class="small">Titular de la cuenta: <strong id="titularNombre">—</strong></p>
         <div class="note">Transferí el <strong>mismo monto</strong> que indicaste y adjuntá el <strong>comprobante</strong> en WhatsApp.</div>
 
         <h2 style="margin-top:14px">2) Enviá por WhatsApp</h2>
