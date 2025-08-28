@@ -1,6 +1,21 @@
 // Configuración central — VegasBett
 window.VEGASBETT_CONFIG = {
   MARCA: "VegasBett",
+window.VEGASBETT_CONFIG = {
+  // ... (lo que ya tenés)
+
+  // Promos por día (0=Domingo … 6=Sábado)
+  PROMOS_BY_DAY: { 0:25, 1:20, 2:15, 3:10, 4:10, 5:20, 6:20 },
+  PROMO_MIN: 2000,
+  PROMO_MAX: 20000,
+
+  // Bono bienvenida
+  NEW_USER_BONO: 35,
+  NEW_MIN: 500,
+
+  // Mostrar/ocultar el banner (si lo usás)
+  SHOW_PROMO_TICKER: true,
+};
 
   // Números (sin + ni espacios)
   NUMERO_PRINCIPAL: "5492233415879",
