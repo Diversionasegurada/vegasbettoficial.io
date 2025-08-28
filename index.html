@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>VegasBett — Centro de Atención</title>
 
-  <!-- Rutas relativas -->
-  <link rel="stylesheet" href="assets/styles.css"/>
-  <script src="assets/config.js"></script>
-  <script defer src="assets/app.js"></script>
+  <!-- Estilos y config -->
+  <link rel="stylesheet" href="./assets/styles.css?v=13"/>
+  <script src="./assets/config.js?v=13"></script>
+  <script defer src="./assets/app.js?v=13"></script>
 
-  <!-- head dinámico (noindex y OG) -->
+  <!-- Metas dinámicas (noindex + OG) -->
   <script>
   (function(){
     const C = window.VEGASBETT_CONFIG || {};
@@ -27,63 +27,52 @@
       var i=document.createElement('meta'); i.setAttribute('property','og:image');
       i.content=(C.OG_IMAGE||'assets/portada_paginaweb.png'); document.head.appendChild(i);
     }
-    var tc=document.createElement('meta'); tc.name='theme-color'; tc.content='#5b2d82'; document.head.appendChild(tc);
-  })();
-  </script>
-
-  <!-- Pixel (opcional, controlado por config) -->
-  <script>
-  (function(){
-    var C=window.VEGASBETT_CONFIG||{}; if(!C.TRACKING_ENABLED) return;
-    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-    n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
-    n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
-    t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
-    fbq('init','24100361799629508'); fbq('track','PageView');
+    var tc=document.createElement('meta'); tc.name='theme-color'; tc.content='#13141b'; document.head.appendChild(tc);
   })();
   </script>
 </head>
 <body>
   <div class="container">
     <div class="card">
+      <!-- Header -->
       <div class="header">
         <div class="brand">
           <span>🎰 VegasBett</span>
           <span class="badge">Atención 24/7</span>
         </div>
-        <!-- Admin oculto por defecto; lo mostrás con long-press en el logo o Shift+Alt+A -->
-        <span class="badge-pill badge-admin" id="adminToggle" title="Panel rápido" style="display:none">Admin</span>
+        <span class="badge-pill badge-admin" id="adminToggle" title="Panel rápido">Admin</span>
       </div>
 
-      <!-- LOGO CHICO (click = ir a cargar) -->
-      <div class="logo-hero" id="logoHero">
-        <img src="assets/portada_paginaweb.png" alt="VegasBett" class="logo-img">
+      <!-- Logo compacto -->
+      <div class="logo-hero">
+        <img src="assets/portada_paginaweb.png" alt="VegasBett" class="logo-img"/>
       </div>
 
+      <!-- Título -->
       <h1 class="center">¿Qué necesitás hacer hoy?</h1>
       <p class="center sub">Uso interno.</p>
 
-      <!-- LEYENDA DORADA -->
+      <!-- Leyenda dorada -->
       <p class="center gold-legend">
         Página oficial de <strong>VEGASBETT</strong> — jugá distinto, jugá seguro.
         <span class="gold-promo">Bono del 35% en tu <u>primera carga</u> (mínimo $500).</span>
       </p>
 
-      <!-- BANNER PROMO CLICKEABLE -->
-      <a id="promoTicker" class="promo-ticker hidden" href="cargar.html?promo=on" aria-label="Cargar con promo de hoy">
-        <span class="promo-led"></span>
-        <span id="promoText">Hoy: bono +XX% en cargas de $2.000 a $20.000.</span>
+      <!-- Promo del día (se arma desde JS) -->
+      <a id="promoTicker" class="promo-ticker hidden" href="#" rel="nofollow">
+        <span class="promo-led" aria-hidden="true"></span>
+        <span id="promoText">Promo del día…</span>
         <span class="promo-cta">Aprovechar →</span>
       </a>
 
-      <!-- ACCIONES DESTACADAS -->
+      <!-- Acciones destacadas -->
       <div class="featured-actions">
-        <a class="btn external" data-ico="🌐" href="https://ganamos.io/" target="_blank" rel="noopener noreferrer">Ir a ganamos.io</a>
+        <a class="btn secondary" data-ico="🌐" href="https://ganamos.io/" target="_blank" rel="noopener noreferrer">Ir a ganamos.io</a>
         <button class="btn bonus" data-ico="🎁" id="btnSoyNuevo">Soy nuevo (bono 35%)</button>
         <button class="btn secondary" data-ico="ℹ️" id="btnMasInfo">Más info</button>
       </div>
 
-      <!-- BOTONES OPERATIVOS -->
+      <!-- Botonera principal -->
       <div class="grid">
         <button class="btn ok" data-ico="📞" id="btnPrincipal">Número principal (WhatsApp)</button>
         <button class="btn secondary" data-ico="🛟" id="btnRespaldo">En caso de reclamo (WhatsApp)</button>
@@ -91,7 +80,7 @@
         <a class="btn" data-ico="💸" href="retirar.html">Quiero Retirar</a>
       </div>
 
-      <!-- PANEL ADMIN -->
+      <!-- Admin rápido -->
       <div id="adminPanel" class="admin-panel hidden">
         <h3>Panel rápido</h3>
         <p class="sub">Actualizá números al vuelo o generá un link compartible.</p>
@@ -108,11 +97,10 @@
         </div>
       </div>
 
-      <footer class="center">
-        © <span id="year"></span> VegasBett • Jugá responsable • + 18 años.
-      </footer>
+      <!-- Footer -->
+      <footer class="center">© <span id="year"></span> VegasBett • Jugá responsable • + 18 años.</footer>
 
-      <!-- Modal: Más info / Spech -->
+      <!-- Modal Más info / Spech -->
       <div id="modalInfo" class="vb-modal hidden" aria-hidden="true" role="dialog" aria-labelledby="modalInfoTitle">
         <div class="vb-modal__backdrop" data-close="1"></div>
         <div class="vb-modal__card">
@@ -124,8 +112,7 @@
             <p class="small" style="margin-top:-6px">
               *Válido en la <strong>primera</strong> carga, con un mínimo de <strong>$500</strong> (ARS).
             </p>
-            <pre id="spechText" class="vb-pre">
-🎰 ¡BIENVENID@ A VEGASBETT! 🎰
+            <pre id="spechText" class="vb-pre">🎰 ¡BIENVENID@ A VEGASBETT! 🎰
 💥 Estás a punto de entrar al lugar donde TODO puede pasar...
 🔥 BONO EXCLUSIVO del +35% en tu primera recarga 💸
 
@@ -143,8 +130,7 @@ Esto es lo que te espera:
 🍀 Hoy es el día. Hoy puede ser tu primera GRAN jugada.
 
 🔥 ¡Respondé este mensaje y activá tu lugar en la mesa!
-🎉 VegasBett te espera… con los dados cargados a tu favor 🎲💰
-            </pre>
+🎉 VegasBett te espera… con los dados cargados a tu favor 🎲💰</pre>
           </div>
           <div class="vb-modal__foot">
             <button class="btn secondary" id="copySpech" data-ico="📋">Copiar texto</button>
@@ -153,11 +139,11 @@ Esto es lo que te espera:
         </div>
       </div>
       <!-- /Modal -->
-
-    </div> <!-- .card -->
-  </div>   <!-- .container -->
+    </div>
+  </div>
 
   <div id="toast" class="toast">Copiado</div>
 </body>
 </html>
+
 
