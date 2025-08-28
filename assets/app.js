@@ -1,12 +1,10 @@
-// ===============================
-// Lógica principal VegasBett (privado)
-// ===============================
+// Lógica principal VegasBett
 (function () {
   const $  = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
   const CFG = window.VEGASBETT_CONFIG || {};
 
-  // -------- Utilidades --------
+  // Utilidades
   function waUrl(number, text) {
     const msg = encodeURIComponent(text || "");
     return number ? `https://wa.me/${number}?text=${msg}` : `https://wa.me/?text=${msg}`;
@@ -33,17 +31,12 @@
     t.classList.add("show");
     setTimeout(() => t.classList.remove("show"), 1600);
   }
-  function todayPromoPercent() {
-    const map = CFG.PROMOS || {};
-    const p = Number(map[(new Date()).getDay()] || 0);
-    return isNaN(p) ? 0 : p;
-  }
 
-  // Año en footer
-  const yearEl = document.getElementById("year");
+  // Año footer
+  const yearEl = $("#year");
   if (yearEl) yearEl.textContent = new Date().getFullYear();
 
-  // Overrides por URL (emergencia)
+  // Overrides por URL
   try {
     const url = new URL(location.href);
     const p = url.searchParams.get("principal");
@@ -52,20 +45,33 @@
     if (r) CFG.NUMERO_RESPALDO  = r;
   } catch (e) {}
 
-  // Logo click -> Cargar
-  $("#logoHero")?.addEventListener("click", ()=> location.href = "cargar.html");
+  // ===== PROMO DEL DÍA (Index) =====
+  (function promoTicker(){
+    const a = $("#promoTicker"); if (!a) return;
+    const qp = new URLSearchParams(location.search);
+    const forceOff = qp.get("promos")==="off";
+    const forceOn  = qp.get("promos")==="on";
+    if ((!CFG.SHOW_PROMO_TICKER && !forceOn) || forceOff) { a.classList.add("hidden"); return; }
 
-  // Mostrar botón Admin con long-press en logo (o Shift+Alt+A)
-  const adminBtn = $("#adminToggle");
-  const logo = $("#logoHero");
-  let pressTimer;
-  function showAdmin(){ if (adminBtn) adminBtn.style.display = 'inline-block'; toast('Admin visible'); }
-  logo?.addEventListener('mousedown', ()=> { pressTimer = setTimeout(showAdmin, 700); });
-  logo?.addEventListener('touchstart', ()=> { pressTimer = setTimeout(showAdmin, 700); }, {passive:true});
-  ['mouseup','mouseleave','touchend','touchcancel'].forEach(ev => logo?.addEventListener(ev, ()=> clearTimeout(pressTimer)));
-  document.addEventListener('keydown', (e)=>{ if(e.shiftKey && e.altKey && e.code==='KeyA') showAdmin(); });
+    const day = new Date().getDay(); // 0=Dom..6=Sáb
+    const pct = (CFG.PROMO_BONUS_BY_DAY||{})[day];
+    if (!pct) { a.classList.add("hidden"); return; }
 
-  // Home: botones directos
+    const txt = `Hoy: bono +${pct}% en cargas de ${moneyFormat(CFG.PROMO_MIN)} a ${moneyFormat(CFG.PROMO_MAX)}.`;
+    $("#promoText").textContent = txt;
+    a.classList.remove("hidden");
+    a.addEventListener("click", (e)=>{
+      e.preventDefault();
+      const url = new URL(location.origin + location.pathname.replace(/index\.html?$/i,'') + "cargar.html");
+      url.searchParams.set("promo","1");
+      url.searchParams.set("pct", String(pct));
+      url.searchParams.set("min", String(CFG.PROMO_MIN||2000));
+      url.searchParams.set("max", String(CFG.PROMO_MAX||20000));
+      location.href = url.toString();
+    });
+  })();
+
+  // ===== Botones Home =====
   if ($("#btnPrincipal")) {
     $("#btnPrincipal").addEventListener("click", () => {
       const text = `Hola, soy ____.
@@ -84,38 +90,14 @@ Gracias.`;
       location.href = waUrl(CFG.NUMERO_RESPALDO, text);
     });
   }
-  // Soy nuevo (bono 35%)
-  if (document.querySelector('#btnSoyNuevo')) {
-    document.querySelector('#btnSoyNuevo').addEventListener('click', () => {
+  // Soy nuevo
+  if ($("#btnSoyNuevo")) {
+    $("#btnSoyNuevo").addEventListener("click", () => {
       const texto = "Soy nuevo, quiero mi bono del 35%";
       if (typeof fbq === "function") { fbq("track", "Contact", { flow: "bono_nuevo" }); }
       location.href = waUrl(CFG.NUMERO_PRINCIPAL, texto);
     });
   }
-
-  // ===== Banner promo en Home =====
-  (function initPromoTicker(){
-    const el = document.getElementById('promoTicker');
-    if (!el) return;
-    const pct = todayPromoPercent();
-    const min = CFG.PROMO_MIN || 2000;
-    const max = CFG.PROMO_MAX || 20000;
-
-    // overrides por URL: ?promos=off / ?promos=on
-    let force = null;
-    try {
-      const q = new URL(location.href).searchParams.get('promos');
-      if (q === 'off') force = false;
-      if (q === 'on')  force = true;
-    } catch(e){}
-
-    const shouldShow = (force !== null) ? force : (!!CFG.SHOW_PROMO_TICKER && pct > 0);
-    if (!shouldShow) { el.classList.add('hidden'); return; }
-
-    const txt = document.getElementById('promoText');
-    if (txt) txt.textContent = `Hoy: bono +${pct}% en cargas de ${moneyFormat(min)} a ${moneyFormat(max)}.`;
-    el.classList.remove('hidden');
-  })();
 
   // ===== CARGAR =====
   if ($("#formCargar")) {
@@ -124,23 +106,27 @@ Gracias.`;
     const cbu   = $("#cbu");
     const alias = $("#alias");
 
-    // Detectar si entró por promo
-    const qp = new URL(location.href).searchParams;
-    const promoOn  = qp.get('promo') === 'on';
-    const promoPct = todayPromoPercent();
-    const promoMin = CFG.PROMO_MIN || 2000;
-    const promoMax = CFG.PROMO_MAX || 20000;
-
-    // Nota “promo activa”
-    if (promoOn && promoPct > 0) {
-      const note = document.createElement('div');
-      note.className = 'note'; note.style.marginTop = '8px';
-      note.textContent = `Promo +${promoPct}% activa hoy en cargas de ${moneyFormat(promoMin)} a ${moneyFormat(promoMax)}.`;
-      form.parentNode.insertBefore(note, form);
-    }
-
     if (cbu)   cbu.value   = CFG.CBU   || "";
     if (alias) alias.value = CFG.ALIAS || "";
+
+    // Promo enforcement si viene ?promo=1
+    (function promoNotice(){
+      const url = new URL(location.href);
+      const isPromo = url.searchParams.get("promo")==="1";
+      const pct = Number(url.searchParams.get("pct")||0);
+      const min = Number(url.searchParams.get("min")||CFG.PROMO_MIN||2000);
+      const max = Number(url.searchParams.get("max")||CFG.PROMO_MAX||20000);
+      const box = $("#promoNotice");
+      if (isPromo && box) {
+        box.textContent = `Promo activa: +${pct}% en cargas desde ${moneyFormat(min)} hasta ${moneyFormat(max)}.`;
+        box.classList.remove("hidden");
+        // Guardamos para validar al enviar
+        box.dataset.promo = "1";
+        box.dataset.pct = String(pct);
+        box.dataset.min = String(min);
+        box.dataset.max = String(max);
+      }
+    })();
 
     $$(".copybtn").forEach(btn => btn.addEventListener("click", (e) => {
       e.preventDefault();
@@ -152,16 +138,6 @@ Gracias.`;
       const nombre = $("#nombre").value.trim();
       const monto  = $("#monto").value.trim();
       if (!nombre || !monto) { alert("Completá nombre y monto."); return; }
-
-      // Rango obligatorio solo si vienen por promo
-      if (promoOn && promoPct > 0) {
-        const val = Number(monto);
-        if (isNaN(val) || val < promoMin || val > promoMax) {
-          alert(`Para aplicar el bono +${promoPct}%, la carga debe ser entre ${moneyFormat(promoMin)} y ${moneyFormat(promoMax)}.`);
-          return;
-        }
-      }
-
       paso2.classList.remove("hidden");
       paso2.scrollIntoView({ behavior: "smooth", block: "start" });
     });
@@ -173,52 +149,59 @@ Gracias.`;
         const monto  = $("#monto").value.trim();
         if (!nombre || !monto) { alert("Completá nombre y monto."); return; }
 
-        if (promoOn && promoPct > 0) {
-          const val = Number(monto);
-          if (isNaN(val) || val < promoMin || val > promoMax) {
-            alert(`Para aplicar el bono +${promoPct}%, la carga debe ser entre ${moneyFormat(promoMin)} y ${moneyFormat(promoMax)}.`);
+        // Validación promo si corresponde
+        const promoBox = $("#promoNotice");
+        if (promoBox && promoBox.dataset.promo==="1") {
+          const min = Number(promoBox.dataset.min||2000);
+          const max = Number(promoBox.dataset.max||20000);
+          const v = Number(monto||0);
+          if (v < min || v > max) {
+            alert(`Esta promo aplica entre ${moneyFormat(min)} y ${moneyFormat(max)}.\nCargaste: ${moneyFormat(monto)}.`);
             return;
           }
         }
 
-        const extra = (promoOn && promoPct > 0) ? `\n[PROMO +${promoPct}% válida hoy]` : '';
         const text = `Hola, soy *${nombre}*.
 Quiero *CARGAR* ${moneyFormat(monto)}.
-CBU/ALIAS copiado. Envío el comprobante aquí.${extra}`;
+CBU/ALIAS copiado. Envío el comprobante aquí.`;        
         if (typeof fbq === "function") { fbq("track", "Contact", { flow: "cargar" }); }
         location.href = waUrl(CFG.NUMERO_PRINCIPAL, text);
       });
     }
   }
 
-  // ===== RETIRAR (solo DATOS) =====
-  if (document.querySelector("#formRetirar")) {
-    const titularInput  = document.querySelector("#titularR");
-    const cbuAliasInput = document.querySelector("#cbuAliasR");
+  // ===== RETIRAR =====
+  if ($("#formRetirar")) {
+    const titularInput = $("#titularR");
+    const cbuAliasInput = $("#cbuAliasR");
     if (titularInput && CFG.TITULAR) titularInput.value = CFG.TITULAR;
     if (cbuAliasInput) cbuAliasInput.value = (CFG.ALIAS || CFG.CBU || "");
 
-    document.querySelector("#formRetirar").addEventListener("submit", (e) => {
+    $("#formRetirar").addEventListener("submit", (e) => {
       e.preventDefault();
 
-      const usuario  = document.querySelector("#usuarioR").value.trim();
-      const titular  = document.querySelector("#titularR").value.trim();
-      const cbuAlias = document.querySelector("#cbuAliasR").value.trim();
-      const monto    = document.querySelector("#montoR").value.trim();
+      const usuario  = $("#usuarioR").value.trim();
+      const titular  = $("#titularR").value.trim();
+      const cbuAlias = $("#cbuAliasR").value.trim();
+      const monto    = $("#montoR").value.trim();
 
       if (!usuario || !titular || !cbuAlias || !monto) {
-        alert("Completá todos los campos."); return;
+        alert("Completá todos los campos.");
+        return;
       }
       if (Number(monto) > 250000) {
-        alert("El monto máximo por retiro es $250.000"); return;
+        alert("El monto máximo por retiro es $250.000");
+        return;
       }
 
       const text = `Usuario: ${usuario}
 Titular: ${titular}
 CBU o Alias: ${cbuAlias}
 Monto a retirar: ${moneyFormat(monto)}`;
+
+      const url = waUrl(CFG.NUMERO_PRINCIPAL, text);
       if (typeof fbq === "function") { fbq("track", "Contact", { flow: "retirar" }); }
-      window.location.href = waUrl(CFG.NUMERO_PRINCIPAL, text);
+      window.location.href = url;
     });
   }
 
@@ -229,9 +212,7 @@ Monto a retirar: ${moneyFormat(monto)}`;
   const nP    = $("#nPrincipal");
   const nR    = $("#nRespaldo");
 
-  if (adminToggle && panel) {
-    adminToggle.addEventListener("click", () => panel.classList.toggle("hidden"));
-  }
+  if (adminToggle && panel) adminToggle.addEventListener("click", () => panel.classList.toggle("hidden"));
   if ($("#aplicarAdmin")) {
     $("#aplicarAdmin").addEventListener("click", () => {
       if (!pin.value || pin.value !== (CFG.EMERGENCY_PIN || "")) { alert("PIN incorrecto"); return; }
@@ -253,13 +234,12 @@ Monto a retirar: ${moneyFormat(monto)}`;
     });
   }
 
-  // ---- Age Gate 18+ ----
+  // ===== Age Gate 18+ =====
   (function ageGate(){
-    const C = window.VEGASBETT_CONFIG || {};
-    if (!C.AGE_GATE_ENABLED) return;
+    if (!CFG.AGE_GATE_ENABLED) return;
     if (localStorage.getItem('AGE_OK') === '1') return;
 
-    const minAge = C.EDAD_MINIMA || 18;
+    const minAge = CFG.EDAD_MINIMA || 18;
     const backdrop = document.createElement('div');
     backdrop.className = 'age-backdrop';
     backdrop.innerHTML = `
@@ -270,41 +250,29 @@ Monto a retirar: ${moneyFormat(monto)}`;
           <button id="ageYes" class="btn ok">Sí, soy mayor</button>
           <button id="ageNo" class="btn warn">No, salir</button>
         </div>
-      </div>
-    `;
+      </div>`;
     document.body.appendChild(backdrop);
-
-    document.getElementById('ageYes')?.addEventListener('click', () => {
-      localStorage.setItem('AGE_OK', '1');
-      backdrop.remove();
-    });
-    document.getElementById('ageNo')?.addEventListener('click', () => {
-      window.location.href = 'https://www.google.com';
-    });
+    $("#ageYes")?.addEventListener('click', () => { localStorage.setItem('AGE_OK','1'); backdrop.remove(); });
+    $("#ageNo")?.addEventListener('click', () => { window.location.href = 'https://www.google.com'; });
   })();
 
   // ===== Modal "Más info" =====
   (function(){
-    const modal   = document.getElementById('modalInfo');
-    const btnOpen = document.getElementById('btnMasInfo');
-    const btnClose= document.getElementById('modalClose');
-    const btnOk   = document.getElementById('modalOk');
-    const btnCopy = document.getElementById('copySpech');
-    const spech   = document.getElementById('spechText');
-
+    const modal   = $("#modalInfo");
+    const btnOpen = $("#btnMasInfo");
+    const btnClose= $("#modalClose");
+    const btnOk   = $("#modalOk");
+    const btnCopy = $("#copySpech");
+    const spech   = $("#spechText");
     if (!modal || !btnOpen) return;
 
     const open  = ()=> { modal.classList.remove('hidden'); modal.setAttribute('aria-hidden','false'); };
     const close = ()=> { modal.classList.add('hidden');   modal.setAttribute('aria-hidden','true');  };
-
     btnOpen.addEventListener('click', open);
     btnClose?.addEventListener('click', close);
     btnOk?.addEventListener('click', close);
-    modal.querySelector('.vb-modal__backdrop')?.addEventListener('click', e=>{
-      if (e.target.dataset.close) close();
-    });
+    modal.querySelector('.vb-modal__backdrop')?.addEventListener('click', e=>{ if (e.target.dataset.close) close(); });
     document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') close(); });
-
     btnCopy?.addEventListener('click', ()=>{
       const txt = spech?.innerText || '';
       (navigator.clipboard?.writeText(txt) || Promise.reject()).then(
@@ -313,5 +281,4 @@ Monto a retirar: ${moneyFormat(monto)}`;
       );
     });
   })();
-
 })();
