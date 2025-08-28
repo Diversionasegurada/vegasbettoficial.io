@@ -1,70 +1,52 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>VegasBett — Retirar saldo</title>
 
-  <link rel="stylesheet" href="assets/styles.css"/>
-  <script src="assets/config.js"></script>
-  <script defer src="assets/app.js"></script>
+  <link rel="stylesheet" href="assets/styles.css?v=13"/>
+  <script src="assets/config.js?v=13"></script>
+  <script defer src="assets/app.js?v=13"></script>
+
+  <script>(function(){
+    const C=window.VEGASBETT_CONFIG||{};
+    if(C.NO_INDEX){var m=document.createElement('meta');m.name='robots';m.content='noindex,nofollow';document.head.appendChild(m)}
+    if(C.SHARE_PREVIEW!==false){
+      var t=document.createElement('meta');t.setAttribute('property','og:title');t.content=(C.MARCA||'VegasBett')+' – Retirar';document.head.appendChild(t);
+      var d=document.createElement('meta');d.setAttribute('property','og:description');d.content='Solicitá tu retiro (1 cada 24 hs).';document.head.appendChild(d);
+      var i=document.createElement('meta');i.setAttribute('property','og:image');i.content=(C.OG_IMAGE||'assets/portada_paginaweb.png');document.head.appendChild(i);
+    }
+    var tc=document.createElement('meta');tc.name='theme-color';tc.content='#13141b';document.head.appendChild(tc);
+  })();</script>
 </head>
-<body class="bg-blur">
+<body>
   <div class="container">
     <div class="card">
       <div class="header">
-        <div class="brand">
-          <span>🎰 VegasBett</span>
-          <span class="badge">Retiros</span>
-        </div>
+        <div class="brand"><span>🎰 VegasBett</span><span class="badge">Retiros</span></div>
         <a class="badge-pill" href="index.html">← Volver</a>
       </div>
 
       <h1>Solicitá tu retiro</h1>
+      <p class="sub">Un retiro cada 24 horas. Completá tus datos y te confirmamos por WhatsApp.</p>
 
-      <div class="note" style="font-size:15px; line-height:1.45">
-        🎉 <strong>¡FELICITACIONES POR TU PREMIO!</strong> 🥳<br/>
-        Para procesar tu retiro, por favor completá los siguientes datos:
-        <ul class="clean">
-          <li>👤 <em>Usuario</em></li>
-          <li>👑 <em>Titular de la cuenta</em></li>
-          <li>🏦 <em>CBU o Alias</em></li>
-          <li>💵 <em>Monto a retirar</em></li>
-        </ul>
-        <hr class="soft"/>
-        ⏰ <strong>RECORDÁ:</strong><br/>
-        📆 Solo se puede realizar 1 retiro cada 24 hs.<br/>
-        💸 Monto máximo por retiro: $250.000
-      </div>
-
-      <form id="formRetirar" class="form" style="margin-top:14px">
-        <div>
-          <label for="usuarioR">Usuario</label>
-          <input id="usuarioR" type="text" placeholder="Ej: ricardo23" required/>
-        </div>
-        <div>
-          <label for="titularR">Titular de la cuenta</label>
-          <input id="titularR" type="text" placeholder="Ej: Priscila Correa" required/>
-        </div>
-        <div>
-          <label for="cbuAliasR">CBU o Alias</label>
-          <input id="cbuAliasR" type="text" placeholder="Ej: 000000... o Vegass.bet" required/>
-        </div>
-        <div>
-          <label for="montoR">Monto a retirar (ARS)</label>
-          <input id="montoR" type="number" inputmode="numeric" placeholder="Ej: 20000" required min="1" max="250000"/>
-        </div>
+      <form id="formRetirar" class="form">
+        <div><label for="usuarioR">Usuario</label><input id="usuarioR" type="text" placeholder="Ej: ricardo23" required/></div>
+        <div><label for="titularR">Titular de la cuenta</label><input id="titularR" type="text" placeholder="Ej: Priscila Correa" required/></div>
+        <div><label for="cbuAliasR">CBU o Alias</label><input id="cbuAliasR" type="text" placeholder="Ej: 000000... o Vegass.bet" required/></div>
+        <div><label for="montoR">Monto a retirar (ARS)</label><input id="montoR" type="number" inputmode="numeric" placeholder="Ej: 20000" required min="1" max="250000"/></div>
+        <div class="note">Recordá: un retiro <strong>cada 24 horas</strong>. Máximo por retiro: $250.000.</div>
         <div class="cta-row">
           <button type="submit" class="btn ok">Enviar por WhatsApp</button>
           <a href="index.html" class="btn secondary">Cancelar</a>
         </div>
       </form>
 
-      <footer class="center">
-        © <span id="year"></span> VegasBett
-      </footer>
+      <footer class="center">© <span id="year"></span> VegasBett</footer>
     </div>
   </div>
   <div id="toast" class="toast">Copiado</div>
 </body>
 </html>
+
