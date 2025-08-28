@@ -30,8 +30,20 @@
     var tc=document.createElement('meta'); tc.name='theme-color'; tc.content='#5b2d82'; document.head.appendChild(tc);
   })();
   </script>
+
+  <!-- Pixel (opcional, controlado por config) -->
+  <script>
+  (function(){
+    var C=window.VEGASBETT_CONFIG||{}; if(!C.TRACKING_ENABLED) return;
+    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+    n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init','24100361799629508'); fbq('track','PageView');
+  })();
+  </script>
 </head>
-<body class="bg-blur">
+<body>
   <div class="container">
     <div class="card">
       <div class="header">
@@ -39,10 +51,11 @@
           <span>🎰 VegasBett</span>
           <span class="badge">Atención 24/7</span>
         </div>
-        <span class="badge-pill badge-admin hidden" id="adminToggle" title="Panel rápido">Admin</span>
+        <!-- Admin oculto por defecto; lo mostrás con long-press en el logo o Shift+Alt+A -->
+        <span class="badge-pill badge-admin" id="adminToggle" title="Panel rápido" style="display:none">Admin</span>
       </div>
 
-      <!-- Logo / portada -->
+      <!-- LOGO CHICO (click = ir a cargar) -->
       <div class="logo-hero" id="logoHero">
         <img src="assets/portada_paginaweb.png" alt="VegasBett" class="logo-img">
       </div>
@@ -50,36 +63,27 @@
       <h1 class="center">¿Qué necesitás hacer hoy?</h1>
       <p class="center sub">Uso interno.</p>
 
-      <!-- Leyenda dorada -->
+      <!-- LEYENDA DORADA -->
       <p class="center gold-legend">
         Página oficial de <strong>VEGASBETT</strong> — jugá distinto, jugá seguro.
         <span class="gold-promo">Bono del 35% en tu <u>primera carga</u> (mínimo $500).</span>
       </p>
-      <!-- BANNER PROMO (clickeable) -->
-<a id="promoTicker" class="promo-ticker hidden" href="cargar.html?promo=on" aria-label="Cargar con promo de hoy">
-  <span class="promo-led"></span>
-  <span id="promoText">Hoy: bono +XX% en cargas de $2.000 a $20.000</span>
-  <span class="promo-cta">Aprovechar →</span>
-</a>
 
+      <!-- BANNER PROMO CLICKEABLE -->
+      <a id="promoTicker" class="promo-ticker hidden" href="cargar.html?promo=on" aria-label="Cargar con promo de hoy">
+        <span class="promo-led"></span>
+        <span id="promoText">Hoy: bono +XX% en cargas de $2.000 a $20.000.</span>
+        <span class="promo-cta">Aprovechar →</span>
+      </a>
 
-      <!-- Acciones destacadas -->
+      <!-- ACCIONES DESTACADAS -->
       <div class="featured-actions">
-        <a class="btn external" data-ico="🌐" href="https://ganamos.io/" target="_blank" rel="noopener noreferrer">
-          Ir a ganamos.io
-        </a>
-        <button class="btn bonus" data-ico="🎁" id="btnSoyNuevo">
-          Soy nuevo (bono 35%)
-        </button>
-        <button class="btn secondary" data-ico="ℹ️" id="btnMasInfo">
-          Más info
-        </button>
+        <a class="btn external" data-ico="🌐" href="https://ganamos.io/" target="_blank" rel="noopener noreferrer">Ir a ganamos.io</a>
+        <button class="btn bonus" data-ico="🎁" id="btnSoyNuevo">Soy nuevo (bono 35%)</button>
+        <button class="btn secondary" data-ico="ℹ️" id="btnMasInfo">Más info</button>
       </div>
 
-      <!-- Banner de promociones (se inyecta por JS) -->
-      <div id="promoMount"></div>
-
-      <!-- Botones operativos -->
+      <!-- BOTONES OPERATIVOS -->
       <div class="grid">
         <button class="btn ok" data-ico="📞" id="btnPrincipal">Número principal (WhatsApp)</button>
         <button class="btn secondary" data-ico="🛟" id="btnRespaldo">En caso de reclamo (WhatsApp)</button>
@@ -87,6 +91,7 @@
         <a class="btn" data-ico="💸" href="retirar.html">Quiero Retirar</a>
       </div>
 
+      <!-- PANEL ADMIN -->
       <div id="adminPanel" class="admin-panel hidden">
         <h3>Panel rápido</h3>
         <p class="sub">Actualizá números al vuelo o generá un link compartible.</p>
@@ -104,7 +109,7 @@
       </div>
 
       <footer class="center">
-        © <span id="year"></span> VegasBett • Jugá responsable • +18
+        © <span id="year"></span> VegasBett • Jugá responsable • + 18 años.
       </footer>
 
       <!-- Modal: Más info / Spech -->
@@ -148,8 +153,11 @@ Esto es lo que te espera:
         </div>
       </div>
       <!-- /Modal -->
-    </div>
-  </div>
+
+    </div> <!-- .card -->
+  </div>   <!-- .container -->
+
   <div id="toast" class="toast">Copiado</div>
 </body>
 </html>
+
