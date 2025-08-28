@@ -4,6 +4,13 @@
   const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
   const CFG = window.VEGASBETT_CONFIG || {};
 
+  const DIAS = ["Domingo","Lunes","Martes","Miércoles","Jueves","Viernes","Sábado"];
+function getTodayPromo() {
+  const d = new Date().getDay(); // 0=Dom
+  const percent = (CFG.PROMOS_BY_DAY && CFG.PROMOS_BY_DAY[d]) || 0;
+  return { dayIndex: d, dayName: DIAS[d], percent };
+}
+
   // Utilidades
   function waUrl(number, text) {
     const msg = encodeURIComponent(text || "");
