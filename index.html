@@ -6,9 +6,9 @@
   <title>VegasBett — Centro de Atención</title>
 
   <!-- Estilos y config -->
-  <link rel="stylesheet" href="./assets/styles.css?v=13"/>
-  <script src="./assets/config.js?v=13"></script>
-  <script defer src="./assets/app.js?v=13"></script>
+  <link rel="stylesheet" href="./assets/styles.css?v=14"/>
+  <script src="./assets/config.js?v=14"></script>
+  <script defer src="./assets/app.js?v=14"></script>
 
   <!-- Metas dinámicas (noindex + OG) -->
   <script>
@@ -40,7 +40,8 @@
           <span>🎰 VegasBett</span>
           <span class="badge">Atención 24/7</span>
         </div>
-        <span class="badge-pill badge-admin" id="adminToggle" title="Panel rápido">Admin</span>
+        <!-- Admin oculto por defecto -->
+        <span class="badge-pill badge-admin hidden" id="adminToggle" title="Panel rápido">Admin</span>
       </div>
 
       <!-- Logo compacto -->
@@ -58,17 +59,17 @@
         <span class="gold-promo">Bono del 35% en tu <u>primera carga</u> (mínimo $500).</span>
       </p>
 
-      <!-- Promo del día (se arma desde JS) -->
-      <a id="promoTicker" class="promo-ticker hidden" href="#" rel="nofollow">
+      <!-- Banner de promos (único, JS lo muestra y arma el texto) -->
+      <a id="promoTicker" class="promo-ticker hidden" href="cargar.html?promo=today" rel="nofollow">
         <span class="promo-led" aria-hidden="true"></span>
-        <span id="promoText">Promo del día…</span>
+        <span id="promoText">Promos de hoy activas</span>
         <span class="promo-cta">Aprovechar →</span>
       </a>
 
       <!-- Acciones destacadas -->
       <div class="featured-actions">
-        <a class="btn secondary" data-ico="🌐" href="https://ganamos.io/" target="_blank" rel="noopener noreferrer">Ir a ganamos.io</a>
-        <button class="btn bonus" data-ico="🎁" id="btnSoyNuevo">Soy nuevo (bono 35%)</button>
+        <a class="btn external" data-ico="🌐" href="https://ganamos.io/" target="_blank" rel="noopener noreferrer">Ir a ganamos.io</a>
+        <a class="btn bonus" data-ico="🎁" id="btnSoyNuevo" href="cargar.html?promo=new">Soy nuevo (bono 35%)</a>
         <button class="btn secondary" data-ico="ℹ️" id="btnMasInfo">Más info</button>
       </div>
 
@@ -112,7 +113,7 @@
             <p class="small" style="margin-top:-6px">
               *Válido en la <strong>primera</strong> carga, con un mínimo de <strong>$500</strong> (ARS).
             </p>
-            <pre id="spechText" class="vb-pre">🎰 ¡BIENVENID@ A VEGASBETT! 🎰
+<pre id="spechText" class="vb-pre">🎰 ¡BIENVENID@ A VEGASBETT! 🎰
 💥 Estás a punto de entrar al lugar donde TODO puede pasar...
 🔥 BONO EXCLUSIVO del +35% en tu primera recarga 💸
 
@@ -145,5 +146,4 @@ Esto es lo que te espera:
   <div id="toast" class="toast">Copiado</div>
 </body>
 </html>
-
 
