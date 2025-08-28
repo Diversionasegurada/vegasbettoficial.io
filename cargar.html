@@ -1,30 +1,38 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>VegasBett — Cargar saldo</title>
 
-  <link rel="stylesheet" href="assets/styles.css"/>
-  <script src="assets/config.js"></script>
-  <script defer src="assets/app.js"></script>
+  <link rel="stylesheet" href="assets/styles.css?v=13"/>
+  <script src="assets/config.js?v=13"></script>
+  <script defer src="assets/app.js?v=13"></script>
+
+  <script>(function(){
+    const C=window.VEGASBETT_CONFIG||{};
+    if(C.NO_INDEX){var m=document.createElement('meta');m.name='robots';m.content='noindex,nofollow';document.head.appendChild(m)}
+    if(C.SHARE_PREVIEW!==false){
+      var t=document.createElement('meta');t.setAttribute('property','og:title');t.content=(C.MARCA||'VegasBett')+' – Cargar';document.head.appendChild(t);
+      var d=document.createElement('meta');d.setAttribute('property','og:description');d.content='Cargá saldo y enviá el comprobante por WhatsApp.';document.head.appendChild(d);
+      var i=document.createElement('meta');i.setAttribute('property','og:image');i.content=(C.OG_IMAGE||'assets/portada_paginaweb.png');document.head.appendChild(i);
+    }
+    var tc=document.createElement('meta');tc.name='theme-color';tc.content='#13141b';document.head.appendChild(tc);
+  })();</script>
 </head>
-<body class="bg-blur">
+<body>
   <div class="container">
     <div class="card">
       <div class="header">
-        <div class="brand">
-          <span>🎰 VegasBett</span>
-          <span class="badge">Cargar</span>
-        </div>
+        <div class="brand"><span>🎰 VegasBett</span><span class="badge">Cargar</span></div>
         <a class="badge-pill" href="index.html">← Volver</a>
       </div>
 
       <h1>Ingresá tus datos</h1>
       <p class="sub">Completá el nombre y el monto. Copiá CBU/ALIAS y enviá el comprobante por WhatsApp.</p>
 
-      <!-- Promo del día (se inyecta por JS si corresponde) -->
-      <div id="promoMount"></div>
+      <!-- Aviso promo (si viene con ?promo=1) -->
+      <div id="promoNotice" class="note hidden"></div>
 
       <form id="formCargar" class="form">
         <div><label for="nombre">Nombre o usuario</label><input id="nombre" type="text" placeholder="Ej: Ricardo" required/></div>
@@ -44,16 +52,13 @@
         <div class="note">Transferí el <strong>mismo monto</strong> que indicaste y adjuntá el <strong>comprobante</strong> en WhatsApp.</div>
 
         <h2 style="margin-top:14px">2) Enviá por WhatsApp</h2>
-        <p class="sub">Se abre la conversación con el número principal.</p>
         <div class="cta-row">
           <button id="enviarWhatsCargar" class="btn ok">Enviar por WhatsApp</button>
           <a href="index.html" class="btn secondary">Volver</a>
         </div>
       </div>
 
-      <footer class="center">
-        © <span id="year"></span> VegasBett
-      </footer>
+      <footer class="center">© <span id="year"></span> VegasBett</footer>
     </div>
   </div>
   <div id="toast" class="toast">Copiado</div>
