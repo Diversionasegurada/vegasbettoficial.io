@@ -159,3 +159,25 @@ footer{margin-top:12px; color:var(--muted); font-size:12px}
 .age-actions{ display:flex; gap:10px; flex-wrap:wrap; }
 .age-actions .btn{ flex:1 }
 .age-badge{ display:inline-block; padding:2px 8px; border-radius:999px; background: rgba(215,183,110,.15); border: 1px solid rgba(215,183,110,.35); color: var(--gold); font-size: 12px; margin-left: 6px; }
+/* === Promo ticker clickeable === */
+.promo-ticker{
+  display:flex; align-items:center; gap:10px;
+  padding:10px 14px; border-radius:14px;
+  background: linear-gradient(180deg, rgba(215,183,110,.16), rgba(215,183,110,.06));
+  border:1px solid rgba(215,183,110,.35);
+  text-decoration:none; color:var(--text);
+  box-shadow:0 8px 26px rgba(0,0,0,.28);
+  margin:10px auto 12px; max-width:900px;
+  transition:.15s; cursor:pointer;
+}
+.promo-ticker:hover{ transform: translateY(-1px); box-shadow:0 12px 34px rgba(0,0,0,.35); }
+.promo-led{
+  width:10px; height:10px; border-radius:999px;
+  background:#ffd56a; box-shadow:0 0 12px #ffd56a, 0 0 28px rgba(255,213,106,.6);
+  animation: promoBlink 1.4s ease-in-out infinite;
+}
+.promo-cta{ margin-left:auto; font-weight:700; color:var(--gold); }
+@keyframes promoBlink{
+  0%,100%{ opacity:1 } 50%{ opacity:.4 }
+}
+.hidden{ display:none }
